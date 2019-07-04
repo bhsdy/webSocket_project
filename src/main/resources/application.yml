@@ -1,0 +1,14 @@
+server:
+  port: 8021
+tcp:
+  host: 127.0.0.1
+  port: 8022
+  ioThreadNum: 4
+  backlog: 1024
+  openProxyProtocol: false
+websocket:
+  host: 127.0.0.1
+  port: 8023
+  ioThreadNum: 4
+  backlog: 1024
+  openProxyProtocol: false
