@@ -13,6 +13,7 @@ public class ExceptionHandle extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		System.out.println("执行异常关闭连接");
 		log.warn("channel id: {} has exception to close, exception msg: {}", ctx.channel().id().asShortText(),
 				cause.getMessage());
 		log.error("", cause);

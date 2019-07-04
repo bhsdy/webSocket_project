@@ -23,6 +23,7 @@ public class WebSocketOutHandler extends ChannelOutboundHandlerAdapter {
 	
 	@Override
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+		System.out.println("sorcket连接2" + msg);
 		if(!ctx.channel().isActive()) {
 			log.warn("channel id:{} is not active but still write", ctx.channel().id().asShortText());
 		}

@@ -1,5 +1,7 @@
 package com.cn.websocket.codec;
 
+import com.cn.websocket.entity.MessageQueue;
+import com.cn.websocket.threads.DispatcherMessageQueue;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,15 +15,15 @@ import org.springframework.stereotype.Component;
 @Sharable
 public class TextWebSocketFrameHandler extends ChannelInboundHandlerAdapter {
 
-//	@Autowired
-//	private DispatcherMessageQueue queue;
+	@Autowired
+	private DispatcherMessageQueue queue;
 	
     @Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     	TextWebSocketFrame frame = (TextWebSocketFrame)msg;
     	try {
 			ImmutablePair<Channel, byte[]> pair = new ImmutablePair<>(ctx.channel(), frame.text().getBytes());
-//			queue.addMessage(pair);
+			queue.addMessage(pair);
     	} finally {
     		frame.release();
     	}
