@@ -2,26 +2,41 @@ package com.cn.websocket.threads;
 
 import com.cn.websocket.TcpApplication;
 import com.cn.websocket.entity.*;
+import com.cn.websocket.entity.constants.RedisKey;
+import com.cn.websocket.entity.enumEntiy.PlatformEnum;
 import com.cn.websocket.exception.JwtAuthenticationException;
 import com.cn.websocket.exception.ServerException;
+import com.cn.websocket.security.JWTAuthenticatedUserPrincipal;
+import com.cn.websocket.security.JwtAuthenticationToken;
+import com.cn.websocket.server.JwtService;
 import com.cn.websocket.util.CommonUtil;
+import com.cn.websocket.util.LogUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PostConstruct;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -31,8 +46,8 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @Autowired
-//    private JwtService jwtService;
+    @Autowired
+    private JwtService jwtService;
 
     @Autowired
     private AnonConfig anonConfig;
@@ -56,8 +71,8 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
 //    @Autowired
 //    private TcpPermissionService tcpPermissionService;
     
-//    @Autowired
-//	private RedisTemplate<Serializable, Object> redisTemplate;
+    @Autowired
+	private RedisTemplate<Serializable, Object> redisTemplate;
 
     @PostConstruct
     public void init() {
@@ -102,7 +117,7 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
                     for (int i = 0; i < parameters.length; i++) {
                         paramValues[i] = getParameterValue(param, parameters[i]);
                     }
-//                    verifyToken(commandMapping.getUri(), token, channel);
+                    verifyToken(commandMapping.getUri(), token, channel);
                     ChannelContext.set(channel);
                     Object object = method.invoke(commandMapping.getObject(), paramValues);
                     ResponseEntity<?> response = (ResponseEntity<?>) object;
@@ -130,17 +145,17 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
                     channel.writeAndFlush(CommonUtil.buildResponseData(cmd, RestStatus.ERROR_SYSTEM, requestId));
                     log.error("", e);
                 } finally {
-                	/*try {
+                	try {
                 		JWTAuthenticatedUserPrincipal auth = getJWTAuthenticatedUserPrincipal();
                 		Long userId = auth == null ? null : auth.getUid();
                 		PlatformEnum platform = auth == null ? null : auth.getPlatform();
                 		InetSocketAddress address = channelCache.getChannelRealAddress(channel);
                 		String ip = address.getAddress().getHostAddress();
-						LogUtil.flowLog.info("{}|{}|{}|TCP|{}|{}|{}", cmd, userId, platform, isSucc, ip, 
+						LogUtil.flowLog.info("{}|{}|{}|TCP|{}|{}|{}", cmd, userId, platform, isSucc, ip,
 								objectMapper.writeValueAsString(param));
 					} catch (JsonProcessingException e) {
 						log.error("", e);
-					}*/
+					}
                 	SecurityContextHolder.clearContext();
                     ChannelContext.remove();
                 }
@@ -157,7 +172,7 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
         }
     }
     
-  /*  private JWTAuthenticatedUserPrincipal getJWTAuthenticatedUserPrincipal() {
+    private JWTAuthenticatedUserPrincipal getJWTAuthenticatedUserPrincipal() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {
 			Object principal = authentication.getPrincipal();
@@ -166,9 +181,9 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
 			}
 		}
 		return null;
-	}*/
+	}
     
-    /*private boolean verifyToken(String uri, String jwt, Channel channel) {
+    private boolean verifyToken(String uri, String jwt, Channel channel) {
         List<String> anonList = anonConfig.getAnon();
         boolean needVerify = true;
         if (uri.endsWith("/")) {
@@ -205,10 +220,10 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
             SecurityContextHolder.getContext().setAuthentication(token);
             Long userId = token.getPrincipal().getUid();
             //权限校验
-            tcpPermissionService.checkPermission(uri, userId);
+//            tcpPermissionService.checkPermission(uri, userId);
         }
         return true;
-    }*/
+    }
 
     private Object getParameterValue(Map<String, Object> param, Parameter parameter) {
         RequestBody requestBody = parameter.getAnnotation(RequestBody.class);

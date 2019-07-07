@@ -2,6 +2,7 @@ package com.cn.websocket.controller;
 
 import com.cn.websocket.entity.*;
 import com.cn.websocket.exception.ServerException;
+import com.cn.websocket.security.JWTAuthenticatedUserPrincipal;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

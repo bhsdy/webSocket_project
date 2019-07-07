@@ -1,4 +1,4 @@
-package com.cn.websocket.entity;
+package com.cn.websocket.entity.enumEntiy;
 
 public enum PlatformEnum {
 

@@ -1,5 +1,13 @@
 server:
   port: 8021
+
+spring:
+  redis:
+    host: 127.0.0.1
+    password:
+    port: 6379
+
+
 tcp:
   host: 127.0.0.1
   port: 8022
@@ -12,3 +20,16 @@ websocket:
   ioThreadNum: 4
   backlog: 1024
   openProxyProtocol: false
+token:
+  cookie: AUTH-TOKEN
+  header: Authorization
+  secret: 05o12aMdvLvwv9t4Fo72vymT2cHd6tWLAGyJaWSZr4pJtzPAMZMDPIvU68sHZbkGI58UYIahAu6jS883fltMC1lTCHQbDjmyzvmnKI3lThoBgUkqI0uDQ6EU9mTYz0Bq
+  oldSecret: xSI21E4M3skLoOf2
+  oldSecret2: YrKQXIEz04upVwu8
+  expiredSeconds: 3600
+
+innerIp: "127.0.0.1"
+
+anon:
+    - /swagger-ui.html
+    - /user/**

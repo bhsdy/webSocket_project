@@ -1,5 +1,7 @@
-package com.cn.websocket.entity;
+package com.cn.websocket.security;
 
+import com.cn.websocket.entity.enumEntiy.AuthorityEnum;
+import com.cn.websocket.entity.enumEntiy.PlatformEnum;
 import io.jsonwebtoken.Claims;
 import lombok.Getter;
 

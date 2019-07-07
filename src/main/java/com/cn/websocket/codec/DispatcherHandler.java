@@ -1,6 +1,7 @@
 package com.cn.websocket.codec;
 
 import com.cn.websocket.entity.ChannelCache;
+import com.cn.websocket.threads.DispatcherMessageQueue;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -19,8 +20,8 @@ import java.net.InetSocketAddress;
 @Sharable
 public class DispatcherHandler extends ChannelInboundHandlerAdapter {
 
-//	@Autowired
-//	private DispatcherMessageQueue queue;
+	@Autowired
+	private DispatcherMessageQueue queue;
 
 	@Autowired
 	private ChannelCache channelCache;
@@ -41,7 +42,7 @@ public class DispatcherHandler extends ChannelInboundHandlerAdapter {
 			buf.readBytes(data);
 			buf.release();
 			ImmutablePair<Channel, byte[]> pair = new ImmutablePair<>(ctx.channel(), data);
-//			queue.addMessage(pair);
+			queue.addMessage(pair);
 
 		}
 	}

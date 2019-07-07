@@ -1,4 +1,4 @@
-package com.cn.websocket.websocketConfig;
+package com.cn.websocket.config.websocketConfig;
 
 import io.netty.handler.codec.LengthFieldPrepender;
 import org.springframework.context.annotation.Bean;
