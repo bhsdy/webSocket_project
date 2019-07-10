@@ -60,6 +60,7 @@ public abstract class MessageQueue<T> implements Runnable {
 						lock.unlock();
 						isUnlock = true;
 					}
+					//弹出队顶元素，队列为空时，返回空null，获取并移除队列的头部，在指定的等待时间前等待可用的元素
 					message = messageQueue.poll(timeout, TimeUnit.MILLISECONDS);
 					if(message != null) {
 						Object key = getMessageKey(message);
@@ -76,6 +77,7 @@ public abstract class MessageQueue<T> implements Runnable {
 					}
 				}
 				if(message != null) {
+					//执行处理message
 					execute(message);
 				}
 				log(message);

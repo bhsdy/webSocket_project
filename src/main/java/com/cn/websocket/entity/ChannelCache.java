@@ -34,5 +34,13 @@ public class ChannelCache {
 	public void setChannelRealAddress(Channel channel, InetSocketAddress socketAddress) {
 		channelRealAddressMap.put(channel, socketAddress);
 	}
+
+	public InetSocketAddress getChannelRealAddress(Channel channel) {
+		InetSocketAddress address = channelRealAddressMap.get(channel);
+		if(address == null) {
+			address = (InetSocketAddress)channel.remoteAddress();
+		}
+		return address;
+	}
 	
 }

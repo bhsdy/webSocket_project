@@ -20,6 +20,7 @@ public class TextWebSocketFrameHandler extends ChannelInboundHandlerAdapter {
 	
     @Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+		System.out.println("接收客户端webSocket执行---TextWebSocketFrameHandler");
     	TextWebSocketFrame frame = (TextWebSocketFrame)msg;
     	try {
 			ImmutablePair<Channel, byte[]> pair = new ImmutablePair<>(ctx.channel(), frame.text().getBytes());

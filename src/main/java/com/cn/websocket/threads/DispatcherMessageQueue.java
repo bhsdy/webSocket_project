@@ -74,6 +74,7 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
     @Autowired
 	private RedisTemplate<Serializable, Object> redisTemplate;
 
+    //被@PostConstruct修饰的方法会在构造函数之后，init()方法之前运行。
     @PostConstruct
     public void init() {
         executor.start();
@@ -119,6 +120,7 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
                     }
                     verifyToken(commandMapping.getUri(), token, channel);
                     ChannelContext.set(channel);
+                    //执行前端调用的方法
                     Object object = method.invoke(commandMapping.getObject(), paramValues);
                     ResponseEntity<?> response = (ResponseEntity<?>) object;
                     if (response.getBody() instanceof ResponseDTO) {
@@ -156,6 +158,7 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
 					} catch (JsonProcessingException e) {
 						log.error("", e);
 					}
+					//把SecurityContextHolder清空
                 	SecurityContextHolder.clearContext();
                     ChannelContext.remove();
                 }
@@ -189,6 +192,7 @@ public class DispatcherMessageQueue extends MessageQueue<ImmutablePair<Channel, 
         if (uri.endsWith("/")) {
             uri = uri.substring(0, uri.length() - 1);
         }
+        //白名单
         for (String anon : anonList) {
             if (anon.equals(uri)) {
                 needVerify = false;

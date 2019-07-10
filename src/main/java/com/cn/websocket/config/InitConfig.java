@@ -1,4 +1,4 @@
-package com.cn.websocket.config.websocketConfig;
+package com.cn.websocket.config;
 
 import com.cn.websocket.component.NettyServer;
 import com.cn.websocket.component.WebSocketServer;

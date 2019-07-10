@@ -28,7 +28,7 @@ public class DispatcherHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println("接收客户端数据");
+		System.out.println("获取webSocket消息2---DispatcherHandler");
 		byte[] data = null;
 		if (msg instanceof HAProxyMessage) {
 			HAProxyMessage message = (HAProxyMessage) msg;
